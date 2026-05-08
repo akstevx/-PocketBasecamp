@@ -1,23 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
 import { AppHeader } from '../../components/AppHeader';
 import { AppText } from '../../components/AppText';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Section } from '../../components/Section';
 import { GridList } from '../../components/GridList';
-
 import { MealCard } from './components/MealCard';
-
-import { HomeStackParamList } from '../../types/navigation';
 import { Meal } from '../../types/meal';
-
 import { getMealsByCategory } from '../../services/meals/mealsService';
 import { AppLoader } from '../../components/AppLoader';
 import { AppToast } from '../../components/AppToast';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { RootStackParamList, RootTabParamList } from '../../types/navigation';
 
-type HomeNavigationProp = NativeStackNavigationProp<HomeStackParamList,'Home'>;
+type HomeNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<RootTabParamList, 'HomeStack'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
+
 
 export function HomeScreen() {
   const navigation = useNavigation<HomeNavigationProp>();

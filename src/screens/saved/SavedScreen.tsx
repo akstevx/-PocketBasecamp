@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { AppLoader } from '../../components/AppLoader';
 import { AppText } from '../../components/AppText';
@@ -7,22 +9,42 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { Section } from '../../components/Section';
 import { getSavedMeals } from '../../storage/favoritesStorage';
 import { Meal } from '../../types/meal';
+import { MealCard } from '../home/components/MealCard';
+import { CompositeNavigationProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList, RootTabParamList } from '../../types/navigation';
 
+type SavedNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<RootTabParamList, 'Saved'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 export function SavedScreen() {
   const [savedMeals, setSavedMeals] = useState<Meal[]>([]);
-  const [isLoading,  setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    loadSavedMeals();
-  }, []);
+  const navigation = useNavigation<SavedNavigationProp>();
+
+  useFocusEffect(
+    useCallback(() => {
+      loadSavedMeals();
+    }, [])
+  );
 
   async function loadSavedMeals() {
     try {
+      setIsLoading(true);
       const result = await getSavedMeals();
       setSavedMeals(result);
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function openMeal(meal: Meal) {
+    navigation.navigate('MealDetails', {
+      mealId: meal.id,
+      mealName: meal.name,
+    });
   }
 
   if (isLoading) {
@@ -54,7 +76,7 @@ export function SavedScreen() {
         data={savedMeals}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <AppText>{item.name}</AppText>
+          <MealCard meal={item} onPress={openMeal} />
         )}
         columnGap={16}
         rowGap={16}

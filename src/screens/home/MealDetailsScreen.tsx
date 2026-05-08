@@ -15,11 +15,13 @@ import { FloatingHeader } from '../../components/FloatingHeader';
 import { ImagePreviewModal } from '../../components/ImagePreviewModal';
 import { saveMeal, removeMeal, isMealSaved } from '../../storage/favoritesStorage';
 import { PrimaryButton } from '../../components/PrimaryButton';
+import { RootStackParamList } from '../../types/navigation';
 import React from 'react';
 
 
 //get argument params for this component
-type MealDetailsRouteProp = RouteProp<HomeStackParamList, 'MealDetails'>;
+
+type MealDetailsRouteProp = RouteProp<RootStackParamList, 'MealDetails'>;
 
 export function MealDetailsScreen() {
   //add navigation 
