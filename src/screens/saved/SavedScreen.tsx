@@ -1,44 +1,39 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
+import {
+  CompositeNavigationProp,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AppLoader } from '../../components/AppLoader';
 import { AppText } from '../../components/AppText';
 import { GridList } from '../../components/GridList';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Section } from '../../components/Section';
-import { getSavedMeals } from '../../storage/favoritesStorage';
+import { useFavoritesStore } from '../../store/favoritesStore';
+import {
+  RootStackParamList,
+  RootTabParamList,
+} from '../../types/navigation';
 import { Meal } from '../../types/meal';
 import { MealCard } from '../home/components/MealCard';
-import { CompositeNavigationProp } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, RootTabParamList } from '../../types/navigation';
 
 type SavedNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabParamList, 'Saved'>,
   NativeStackNavigationProp<RootStackParamList>
 >;
-export function SavedScreen() {
-  const [savedMeals, setSavedMeals] = useState<Meal[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
 
+export function SavedScreen() {
   const navigation = useNavigation<SavedNavigationProp>();
+
+  const { savedMeals, isLoading, loadSavedMeals,} = useFavoritesStore();
 
   useFocusEffect(
     useCallback(() => {
       loadSavedMeals();
     }, [])
   );
-
-  async function loadSavedMeals() {
-    try {
-      setIsLoading(true);
-      const result = await getSavedMeals();
-      setSavedMeals(result);
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   function openMeal(meal: Meal) {
     navigation.navigate('MealDetails', {
@@ -59,24 +54,37 @@ export function SavedScreen() {
     return (
       <ScreenContainer>
         <Section>
-          <AppText variant="title">No saved meals yet</AppText>
-          <AppText>Meals you save will appear here.</AppText>
+          <AppText variant="title">
+            No saved meals yet
+          </AppText>
+
+          <AppText>
+            Meals you save will appear here.
+          </AppText>
         </Section>
       </ScreenContainer>
     );
   }
 
   return (
-    <ScreenContainer scrollable={false} paddingBottom={0}>
+    <ScreenContainer
+      scrollable={false}
+      paddingBottom={0}
+    >
       <Section>
-        <AppText variant="title">Saved Meals</AppText>
+        <AppText variant="title">
+          Saved Meals
+        </AppText>
       </Section>
 
       <GridList
         data={savedMeals}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item?.id ?? `placeholder-${index}`}
         renderItem={({ item }) => (
-          <MealCard meal={item} onPress={openMeal} />
+          <MealCard
+            meal={item}
+            onPress={openMeal}
+          />
         )}
         columnGap={16}
         rowGap={16}

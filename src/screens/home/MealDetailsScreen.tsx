@@ -13,7 +13,8 @@ import { HomeStackParamList } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { FloatingHeader } from '../../components/FloatingHeader';
 import { ImagePreviewModal } from '../../components/ImagePreviewModal';
-import { saveMeal, removeMeal, isMealSaved } from '../../storage/favoritesStorage';
+import { useFavoritesStore } from '../../store/favoritesStore';
+
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { RootStackParamList } from '../../types/navigation';
 import React from 'react';
@@ -39,7 +40,8 @@ export function MealDetailsScreen() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const [isImagePreviewVisible, setIsImagePreviewVisible] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const { savedMeals, saveFavorite, removeFavorite } = useFavoritesStore();
+  const isSaved = meal ? savedMeals.some((savedMeal) => savedMeal.id === meal.id) : false;
 
   useEffect(() => {
     loadMeal();
@@ -53,8 +55,6 @@ export function MealDetailsScreen() {
       const result = await getMealById(mealId);
       setMeal(result);
 
-      const saved = await isMealSaved(result.id);
-      setIsSaved(saved);
     } catch (error) {
       setErrorMessage('Failed to load meal details.');
     } finally {
@@ -66,13 +66,12 @@ export function MealDetailsScreen() {
     if (!meal) return;
   
     if (isSaved) {
-      await removeMeal(meal.id);
-      setIsSaved(false);
+      await removeFavorite(meal.id);
     } else {
-      await saveMeal(meal);
-      setIsSaved(true);
+      await saveFavorite(meal);
     }
   }
+
 
   if (isLoading) {
     return (

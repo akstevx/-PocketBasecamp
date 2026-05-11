@@ -90,7 +90,7 @@ export function HomeScreen() {
       ) : (
       <GridList
         data={meals}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item?.id ?? `placeholder-${index}`}
         renderItem={({ item }) => (
           <MealCard meal={item} onPress={openMeal} />
         )}

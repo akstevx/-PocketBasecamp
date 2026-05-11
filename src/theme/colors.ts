@@ -6,4 +6,5 @@ export const colors = {
     border: '#E5E5E5',
     tabActive: '#111111',
     tabInactive: '#888888',
+    secondary: '#FF8C42'
   };
