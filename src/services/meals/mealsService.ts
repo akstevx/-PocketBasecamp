@@ -64,3 +64,28 @@ export async function getMealsByCategory(category: string): Promise<Meal[]> {
     }
   );
 }
+
+export async function searchMealsByName(query: string): Promise<Meal[]> {
+  return logRepositoryOperation(
+    {
+      source: 'remote',
+      operation: 'searchMealsByName',
+      input: { query },
+    },
+    async () => {
+      const response = await fetch(`${API_BASE_URL}/search.php?s=${query}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to search meals');
+      }
+
+      const data: MealApiResponse = await response.json();
+
+      if (!data.meals || data.meals.length === 0) {
+        return [];
+      }
+
+      return data.meals.map(mapMealApiToMeal);
+    }
+  );
+}

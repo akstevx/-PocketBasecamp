@@ -22,7 +22,7 @@ export function MealCard({ meal, onPress }: MealCardProps) {
         <View style={styles.favoriteBadge}>
           <Ionicons
             name={isSaved ? 'heart' : 'heart-outline'}
-            size={20}
+            size={15}
             color={
               isSaved
                 ? theme.colors.secondary
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 8,
-    width: 32,
-    height: 32,
+    width: 25,
+    height: 25,
     borderRadius: 16,
     backgroundColor: theme.colors.surface,
     alignItems: 'center',

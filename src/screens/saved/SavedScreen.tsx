@@ -18,6 +18,7 @@ import {
 } from '../../types/navigation';
 import { Meal } from '../../types/meal';
 import { MealCard } from '../home/components/MealCard';
+import { EmptyState } from '../../components/EmptyState';
 
 type SavedNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabParamList, 'Saved'>,
@@ -52,16 +53,13 @@ export function SavedScreen() {
 
   if (savedMeals.length === 0) {
     return (
-      <ScreenContainer>
-        <Section>
-          <AppText variant="title">
-            No saved meals yet
-          </AppText>
-
-          <AppText>
-            Meals you save will appear here.
-          </AppText>
-        </Section>
+    <ScreenContainer>
+        <EmptyState
+          icon="heart-outline"
+          title="No saved meals yet"
+          message="Meals you save will appear here."
+          paddingTop={120}
+        />
       </ScreenContainer>
     );
   }
@@ -70,6 +68,7 @@ export function SavedScreen() {
     <ScreenContainer
       scrollable={false}
       paddingBottom={0}
+      paddingTop={-20}
     >
       <Section>
         <AppText variant="title">
