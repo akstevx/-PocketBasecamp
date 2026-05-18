@@ -14,6 +14,7 @@ import { AppToast } from '../../components/AppToast';
 import { CompositeNavigationProp } from '@react-navigation/native';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootStackParamList, RootTabParamList } from '../../types/navigation';
+import { AppBottomSheet } from '../../components/AppBottomSheet';
 
 type HomeNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabParamList, 'HomeStack'>,
@@ -39,8 +40,7 @@ export function HomeScreen() {
       const result = await getMealsByCategory('Chicken');
       setMeals(result);
     }catch (error) {
-      setErrorMessage('Failed to load meals.');
-    }finally {
+      setErrorMessage('Failed to load meals. Please check your connection and try again.');    }finally {
       setIsLoading(false);
     }
   }
@@ -66,6 +66,11 @@ export function HomeScreen() {
     });
   }
 
+  function retryLoadMeals() {
+    setIsLoading(true);
+    loadMeals();
+  }
+
   return (
     <ScreenContainer scrollable = {false}>
       <AppHeader
@@ -74,10 +79,14 @@ export function HomeScreen() {
       />
 
       {errorMessage ? (
-          <AppToast
-            type="error"
-            message={errorMessage}
-          />
+        <AppBottomSheet
+          visible={Boolean(errorMessage)}
+          title="Couldn’t load meals"
+          body={errorMessage}
+          buttonText="Try again"
+          onAction={retryLoadMeals}
+          onClose={() => setErrorMessage('')}
+        />
         ) : null
       }
 
